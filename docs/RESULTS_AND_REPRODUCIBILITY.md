@@ -73,6 +73,16 @@ workflow definitions, tests, and provenance. It deliberately excludes raw
 source EEG, preprocessed EEG, the Python virtual environment, and download
 caches. Raw and preprocessed EEG remain governed by their original providers.
 
+The linked adaptation stage is stored separately as
+`jacobian-human-adaptation-complete-20260819.tar.gz` (11,851,969,711 bytes;
+SHA-256
+`489838939b634833b3e541bd99410b7d68d80217474578efb8e189ffa8e14fe0`).
+It contains the complete `results-extension/human-adaptation/` tree, including
+checkpoints, stage analyses, aggregate statistics, logs, provenance, frozen
+figure tables, and publication figures. Its neighbouring `.sha256` file is the
+authoritative transfer check. Like the baseline snapshot, it contains no raw
+provider EEG.
+
 Verify the archive before extraction:
 
 ```bash

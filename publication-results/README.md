@@ -12,7 +12,8 @@ It deliberately excludes:
 - model checkpoints and intermediate tensors;
 - download credentials, host paths, and runtime caches.
 
-The complete 5.1 GB checksummed snapshot is stored offline on the project SSD.
+The complete 5.1 GB baseline snapshot and the 11.85 GB compressed adaptation
+archive are stored offline on the project SSD with SHA-256 checksum files.
 Access to any human-level derivatives should follow the licences and governance
 requirements of the original data providers.
 
