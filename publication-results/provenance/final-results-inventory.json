@@ -1,0 +1,14 @@
+{
+  "ready": true,
+  "created_at_utc": "2026-08-16T17:05:50.309159+00:00",
+  "counts": {
+    "included_participants": 173,
+    "human_fold_summaries": 865,
+    "expected_human_fold_summaries": 865,
+    "machine_training_summaries": 100,
+    "machine_signature_tables": 100,
+    "machine_intervention_reports": 100,
+    "expected_machine_runs": 100
+  },
+  "failures": []
+}

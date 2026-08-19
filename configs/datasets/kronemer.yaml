@@ -1,0 +1,46 @@
+dataset_id: "kronemer"
+role: "primary report/no-report visual study"
+source_url: "https://www.nitrc.org/projects/bmvp/"
+maximum_participants: 65
+channels: 257
+source_sampling_rate_hz: 1000
+notch_hz: 60
+epoch_ms: [-300, 900]
+minimum_trials_per_primary_cell: 25
+adapter_status: "verified"
+source_type: "nitrc_participant_archives"
+source_patterns:
+  report_eeg: ["**/*_RP_EEG.tar", "**/*_RP_EEG/**/*.set", "**/*_RP_EEG/**/*.mat"]
+  no_report: ["**/*_NRP.tar", "**/*_NRP/**/*.set", "**/*_NRP/**/*.mat"]
+supported_signal_formats: [".set", ".fdt", ".mat", ".edf", ".bdf"]
+event_mapping_status: "verified_from_behavior_csv_and_egi_fac2_alignment"
+event_columns:
+  original_trial_id: "__derived__:recording_trial_sequence"
+  onset_seconds: "__derived__:behavior_face_time_aligned_to_Fac2"
+  event_type: "__literal__:face_onset"
+  location: "Face quadrant or task-relevant Face location"
+  opacity: "Face opacity or task-relevant Face opacity"
+  report: "__derived__:RP_vs_NRP_archive"
+  perceived: "Perception answer"
+required_physical_fields: ["location", "opacity"]
+required_condition_fields: ["report", "perceived"]
+output_channel_groups:
+  left_anterior: [15, 21, 22, 23, 26, 27, 28, 29, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 45, 46, 47, 48, 49, 53, 54, 55, 60, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 251, 252]
+  left_central: [8, 16, 42, 43, 44, 50, 51, 52, 56, 57, 58, 59, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 81, 82, 83, 90, 91, 92, 101, 250, 253, 254, 255]
+  left_posterior: [84, 85, 86, 87, 88, 93, 94, 95, 96, 97, 98, 99, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 119, 120, 121, 122, 123, 124, 132, 133, 134, 135, 144, 145]
+  right_anterior: [0, 1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 17, 18, 19, 20, 24, 25, 30, 204, 205, 206, 211, 212, 213, 214, 219, 220, 221, 222, 223, 224, 225, 229, 230, 231, 233, 234, 235, 236, 237, 238, 239]
+  right_central: [80, 89, 130, 131, 142, 143, 153, 154, 162, 163, 171, 172, 178, 179, 180, 181, 182, 183, 184, 185, 190, 191, 192, 193, 194, 195, 196, 197, 200, 201, 202, 203, 207, 208, 209, 210, 215, 216, 217, 218, 226, 227, 228, 232]
+  right_posterior: [100, 118, 125, 126, 127, 128, 129, 136, 137, 138, 139, 140, 141, 146, 147, 148, 149, 150, 151, 152, 155, 156, 157, 158, 159, 160, 161, 164, 165, 166, 167, 168, 169, 170, 173, 174, 175, 176, 177, 186, 187, 188, 189, 198, 199]
+primary_contrasts:
+  - condition_field: "perceived"
+    positive: 1
+    negative: 0
+    window_ms: [175, 225]
+  - condition_field: "perceived"
+    positive: 1
+    negative: 0
+    window_ms: [350, 650]
+prediction_outcome: "perceived"
+mapping_sources:
+  - "https://www.nitrc.org/projects/bmvp/"
+  - "results/source-inspection/pilot-adapter-audit.json"

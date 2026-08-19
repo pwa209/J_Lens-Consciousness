@@ -1,0 +1,5 @@
+dataset_id	participant_id	include	reason
+gabor	sub-10	1	pilot source and trigger mapping verified
+somato	sub1	1	pilot matrix and folder mapping verified
+kronemer	223_RP_EEG	1	report pilot EGI and behavior alignment verified
+kronemer	238_NRP	1	no-report pilot EGI and behavior alignment verified

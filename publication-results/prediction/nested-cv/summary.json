@@ -1,0 +1,8 @@
+{
+  "outcome": "outcome",
+  "outer_folds": 5,
+  "mean_conventional_auc": 0.5572131704304502,
+  "mean_augmented_auc": 0.5572974338879357,
+  "mean_incremental_auc": 8.426345748546726e-05,
+  "directional_sign_flip_p": 0.5012498750124987
+}

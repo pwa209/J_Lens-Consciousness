@@ -1,0 +1,45 @@
+dataset_id: "gabor"
+role: "independent masked-Gabor replication"
+source_url: "https://openneuro.org/datasets/ds005273"
+maximum_participants: 29
+channels: 64
+eog_channels: ["EOG1", "EOG2"]
+source_sampling_rate_hz: 1000
+notch_hz: 50
+epoch_ms: [-300, 900]
+minimum_trials_per_perception_class: 40
+adapter_status: "verified"
+source_type: "openneuro_bids"
+snapshot: "1.0.0"
+source_patterns:
+  eeg: ["sub-*/eeg/*_eeg.set", "sub-*/eeg/*_eeg.vhdr", "sub-*/eeg/*_eeg.edf"]
+  events: ["sub-*/eeg/*_events.tsv"]
+supported_signal_formats: [".set", ".vhdr", ".edf"]
+event_mapping_status: "verified_from_author_preprocessing_code"
+event_file_glob: "eeg/*_events.tsv"
+event_columns:
+  original_trial_id: "__derived__:code10_sequence_index"
+  onset_seconds: "onset"
+  event_type: "__literal__:gabor_onset"
+  target_present: "__derived__:codes_55_or_59"
+  orientation: "__derived__:code_74_left_or_75_right"
+  seen: "__derived__:codes_55_or_57"
+required_physical_fields: ["target_present", "orientation"]
+required_condition_fields: ["seen"]
+output_channel_groups:
+  left_anterior: [0, 2, 3, 6, 29, 30, 32, 33, 35]
+  left_central: [4, 5, 7, 8, 9, 34, 36, 37, 38, 39]
+  left_posterior: [10, 12, 13, 14, 40, 41, 42, 43]
+  right_anterior: [1, 25, 26, 27, 28, 31, 54, 56, 57, 58, 59]
+  right_central: [19, 21, 22, 23, 24, 50, 51, 52, 53, 55]
+  right_posterior: [11, 15, 16, 17, 18, 20, 44, 45, 46, 47, 48, 49]
+output_group_index_space: "61-channel preprocessed EEG order after EOG1/EOG2 removal"
+primary_contrasts:
+  - condition_field: "seen"
+    positive: 1
+    negative: 0
+    window_ms: [150, 300]
+prediction_outcome: "seen"
+mapping_sources:
+  - "https://github.com/rodriguez-p/EEGConsciouslySeenUnseen/blob/main/scripts/1_preprocessing/run_preprocessing.py"
+  - "results/source-inspection/pilot-adapter-audit.json"

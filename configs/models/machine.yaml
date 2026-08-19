@@ -1,0 +1,54 @@
+image_size: [64, 64]
+train_images: 200000
+validation_images: 40000
+test_images: 40000
+target_present_probability: 0.6666666667
+contrast_noise_levels: 12
+internal_steps: 6
+signature_steps: [3, 4, 5]
+integration_state_dimensions: 32
+architecture_state_dimensions:
+  feedforward: 32
+  recurrent: 32
+  shared_workspace: 32
+  private_modules: 32
+  unlimited_shared_state: 128
+private_dimensions_per_module: 8
+output_heads:
+  - presence
+  - orientation
+  - location
+  - contrast_bin
+  - delayed_action
+delayed_action_rule: "target presence scored only at the final processing step"
+parameter_target: 2000000
+parameter_tolerance_fraction: 0.10
+architectures:
+  - feedforward
+  - recurrent
+  - shared_workspace
+  - private_modules
+  - unlimited_shared_state
+hidden_widths:
+  feedforward: 2200
+  recurrent: 6650
+  shared_workspace: 1460
+  private_modules: 4350
+  unlimited_shared_state: 710
+seeds: 20
+optimizer: "AdamW"
+learning_rate: 0.0003
+weight_decay: 0.0001
+batch_size: 512
+data_workers: 6
+prefetch_batches: 12
+max_epochs: 30
+patience: 5
+precision: "mixed"
+accuracy_match_tolerance: 0.02
+accuracy_match_target: 0.70
+intervention_step: 4
+random_subspaces: 100
+random_intervention_chunk: 10
+random_percentile_required: 0.95
+successful_seeds_required: 15

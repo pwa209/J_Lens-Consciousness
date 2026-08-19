@@ -1,0 +1,70 @@
+experiment: human_adaptation
+version: 1
+status: preproduction
+
+architectures:
+  - feedforward
+  - recurrent
+  - shared_workspace
+  - private_modules
+  - unlimited_shared_state
+seeds: 20
+selected_difficulty_bin: 2
+
+stages:
+  - random_init
+  - task_trained
+  - human_adapted
+  - sham_adapted
+
+human_primary_dataset: gabor
+human_primary_contrast: gabor-0
+outer_subject_folds: 5
+validation_fraction_of_nonheldout_subjects: 0.20
+participant_split_seed: 20260816
+
+adaptation:
+  target_type: temporal_spatial_cosine_rsm_distribution
+  target_window_ms: [150, 300]
+  target_steps: 6
+  target_moments: [mean, variance]
+  variance_loss_weight: 0.25
+  trainable_scope: architecture_specific_state_formation_and_transition
+  frozen_modules: [encoder, cue_projection, heads]
+  optimizer: AdamW
+  learning_rate: 0.00001
+  weight_decay: 0.0001
+  batch_size: 1024
+  max_steps: 150
+  evaluation_interval_steps: 15
+  early_stopping_patience_evaluations: 4
+  gradient_clip_norm: 1.0
+  checkpoint_metric: validation_neural_alignment_loss
+  lambda_task: 1.0
+  lambda_anchor: 0.001
+  uses_final_geometry_in_loss: false
+  uses_final_geometry_for_checkpoint_selection: false
+
+retention:
+  accuracy_tolerance_absolute: 0.02
+
+sham:
+  enabled: true
+  method: deterministic_joint_time_label_permutation
+  seed: 20260817
+
+external_transfer:
+  evaluate_kronemer: true
+  evaluate_somato: true
+
+intervention:
+  repeat_after_adaptation: true
+  include_sham: true
+
+execution:
+  gpu_workers: 2
+  analysis_gpu_workers: 2
+  smoke_steps: 10
+  maximum_estimated_production_days: 10
+  results_root: results-extension/human-adaptation
+

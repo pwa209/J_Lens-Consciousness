@@ -1,0 +1,37 @@
+{
+  "mode": "production",
+  "ready": true,
+  "expected_runs": 80,
+  "completed_summaries": 80,
+  "completed_interventions": 80,
+  "successful_intervention_seeds": {
+    "feedforward": 20,
+    "recurrent": 20,
+    "shared_workspace": 20,
+    "private_modules": 20
+  },
+  "accuracy_matching": {
+    "ready": true,
+    "mode": "common_threshold_bin",
+    "selected_threshold_bin": 2,
+    "target_validation_presence_accuracy": 0.7,
+    "maximum_architecture_mean_difference": 0.02,
+    "eligible_bins": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "fallback": null,
+    "failures": []
+  },
+  "failures": []
+}

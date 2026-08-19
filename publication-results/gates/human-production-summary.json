@@ -1,0 +1,15 @@
+{
+  "ready": true,
+  "participants": 173,
+  "expected_folds": 865,
+  "completed_summaries": 865,
+  "model_qc_failure_fraction": 0.009248554913294798,
+  "model_qc_failure_fraction_by_dataset": {
+    "gabor": 0.0,
+    "kronemer": 0.013793103448275862,
+    "somato": 0.0
+  },
+  "gating_failures": 0,
+  "fold_level_warnings": 8,
+  "note": "Participant identifiers and fold-level warning labels are retained only in the offline complete archive."
+}

@@ -1,0 +1,2 @@
+"""Deterministic study figures."""
+

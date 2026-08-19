@@ -1,0 +1,479 @@
+import csv
+from pathlib import Path
+
+import yaml
+
+
+configfile: "configs/analysis/primary.yaml"
+
+DATASETS = ["kronemer", "gabor", "somato"]
+ARCHITECTURES = [
+    "feedforward", "recurrent", "shared_workspace", "private_modules",
+    "unlimited_shared_state",
+]
+SMOKE_SEEDS = [0, 1]
+SEEDS = list(range(20))
+FOLDS = list(range(5))
+
+with open("configs/execution/participants.tsv", encoding="utf-8", newline="") as handle:
+    PARTICIPANTS = [
+        row for row in csv.DictReader(handle, delimiter="\t")
+        if str(row.get("include", "")).lower() in {"1", "true", "yes"}
+    ]
+HUMAN_SUMMARIES = [
+    f"results/human/{row['dataset_id']}/{row['participant_id']}/fold-{fold}/summary.json"
+    for row in PARTICIPANTS
+    for fold in FOLDS
+]
+
+CONTRASTS = []
+DATASET_CONFIGS = {}
+for dataset in DATASETS:
+    with open(f"configs/datasets/{dataset}.yaml", encoding="utf-8") as handle:
+        dataset_config = yaml.safe_load(handle)
+    DATASET_CONFIGS[dataset] = dataset_config
+    for index, contrast in enumerate(dataset_config.get("primary_contrasts", [])):
+        CONTRASTS.append({"id": f"{dataset}-{index}", "dataset": dataset, **contrast})
+CONTRAST_IDS = [value["id"] for value in CONTRASTS]
+CONTRAST_BY_ID = {value["id"]: value for value in CONTRASTS}
+PREDICTION_FEATURES = [
+    f"results/prediction/features/{row['dataset_id']}/{row['participant_id']}.parquet"
+    for row in PARTICIPANTS
+]
+
+
+rule all:
+    input:
+        "results/study_complete.flag"
+
+
+rule validate_configs:
+    input:
+        "configs/analysis/primary.yaml",
+        "configs/models/human.yaml",
+        "configs/models/machine.yaml",
+    output:
+        "results/configuration-validation.json"
+    shell:
+        "python scripts/validate_configs.py"
+
+
+rule synthetic_core:
+    output:
+        "results/synthetic/summary.json"
+    shell:
+        "python -m jacaccess.synthetic --output results/synthetic"
+
+
+rule synthetic_human_fold:
+    output:
+        summary="results/synthetic-e2e/fold-{fold}/summary.json",
+        metrics="results/synthetic-e2e/fold-{fold}/sealed_metrics.npz",
+        conditions="results/synthetic-e2e/fold-{fold}/condition_table.json",
+    params:
+        directory=lambda wildcards: f"results/synthetic-e2e/fold-{wildcards.fold}"
+    shell:
+        "python -m jacaccess.synthetic_e2e --fold {wildcards.fold} --output {params.directory}"
+
+
+rule local_core_tests:
+    output:
+        touch("results/local_core_tests_passed.flag")
+    shell:
+        "python scripts/run_local_checks.py && touch {output}"
+
+
+rule environment_report:
+    output:
+        "environment/environment-report.json"
+    shell:
+        "python -m jacaccess.environment_check --scratch /root/autodl-tmp "
+        "--minimum-ram-gib 80 --minimum-scratch-gib 2500 --minimum-cpu-cores 25 "
+        "--output {output}"
+
+
+rule torch_tests:
+    output:
+        touch("results/torch_tests_passed.flag")
+    resources:
+        gpu=1
+    shell:
+        "python -m unittest discover -s tests -p 'test_*torch.py' && touch {output}"
+
+
+rule machine_smoke:
+    output:
+        "results/machine-smoke/{architecture}/seed-{seed}.json"
+    resources:
+        gpu=1
+    shell:
+        "python -m jacaccess.machine.smoke --architecture {wildcards.architecture} "
+        "--seed {wildcards.seed} --output {output}"
+
+
+rule local_ready:
+    input:
+        "results/configuration-validation.json",
+        "results/synthetic/summary.json",
+        "results/local_core_tests_passed.flag",
+        expand("results/synthetic-e2e/fold-{fold}/summary.json", fold=FOLDS),
+    output:
+        touch("results/local_ready.flag")
+
+
+rule autodl_ready:
+    input:
+        "environment/environment-report.json",
+        "results/torch_tests_passed.flag",
+        expand(
+            "results/machine-smoke/{architecture}/seed-{seed}.json",
+            architecture=ARCHITECTURES,
+            seed=SMOKE_SEEDS,
+        ),
+    output:
+        touch("results/autodl_ready.flag")
+
+
+rule stage2_ready:
+    input:
+        "results/local_ready.flag",
+        "results/autodl_ready.flag",
+    output:
+        touch("results/stage2_ready.flag")
+
+
+rule adapter_gate:
+    input:
+        "configs/execution/participants.tsv",
+        expand("configs/datasets/{dataset}.yaml", dataset=DATASETS),
+    output:
+        "results/adapter-gate.json"
+    shell:
+        "python scripts/check_adapter_gate.py"
+
+
+rule standardize_participant:
+    input:
+        gate="results/adapter-gate.json",
+    output:
+        "data/derivatives/standardized/{dataset}/{participant}/descriptor.json"
+    params:
+        source=lambda w: (
+            DATASET_CONFIGS[w.dataset]
+            .get("participant_root_template", "data/raw/{dataset}/{participant}")
+            .format(dataset=w.dataset, participant=w.participant)
+        ),
+        directory=lambda w: f"data/derivatives/standardized/{w.dataset}/{w.participant}",
+        dataset_config=lambda w: f"configs/datasets/{w.dataset}.yaml",
+    threads: 2
+    resources:
+        mem_gb=16
+    shell:
+        "python -m jacaccess.io.standardize standardize --dataset {wildcards.dataset} "
+        "--participant {wildcards.participant} --participant-root {params.source} "
+        "--output {params.directory} --config {params.dataset_config}"
+
+
+rule preprocess_participant:
+    input:
+        descriptor="data/derivatives/standardized/{dataset}/{participant}/descriptor.json"
+    output:
+        "data/derivatives/preprocessed/{dataset}/{participant}/qc.json"
+    params:
+        source=lambda w: f"data/derivatives/standardized/{w.dataset}/{w.participant}",
+        directory=lambda w: f"data/derivatives/preprocessed/{w.dataset}/{w.participant}",
+        dataset_config=lambda w: f"configs/datasets/{w.dataset}.yaml",
+    threads: 20
+    resources:
+        mem_gb=80
+    shell:
+        "python -m jacaccess.preprocess.eeg --source {params.source} --output {params.directory} "
+        "--dataset-config {params.dataset_config} --preprocessing-config configs/preprocessing/eeg.yaml"
+
+
+rule human_fold:
+    input:
+        qc="data/derivatives/preprocessed/{dataset}/{participant}/qc.json"
+    output:
+        summary="results/human/{dataset}/{participant}/fold-{fold}/summary.json",
+        index="results/human/{dataset}/{participant}/fold-{fold}/metrics/partition-index.json",
+    params:
+        preprocessed=lambda w: f"data/derivatives/preprocessed/{w.dataset}/{w.participant}",
+        directory=lambda w: f"results/human/{w.dataset}/{w.participant}/fold-{w.fold}",
+        dataset_config=lambda w: f"configs/datasets/{w.dataset}.yaml",
+    resources:
+        gpu=1,
+        # Pilot validation peaked at 16.2 GiB for the complete fold workflow.
+        # Reserving 24 GiB permits three concurrent folds inside the 90 GiB
+        # AutoDL cgroup while retaining substantial memory headroom.
+        mem_gb=20
+    threads: 6
+    shell:
+        "python -m jacaccess.human_pipeline --dataset {wildcards.dataset} "
+        "--participant {wildcards.participant} --fold {wildcards.fold} "
+        "--preprocessed {params.preprocessed} --output {params.directory} "
+        "--dataset-config {params.dataset_config} --analysis-config configs/analysis/primary.yaml "
+        "--model-config configs/models/human.yaml --device cuda"
+
+
+rule aggregate_human:
+    input:
+        HUMAN_SUMMARIES
+    output:
+        "results/aggregate/human.parquet"
+    shell:
+        "python -m jacaccess.aggregate human --root results/human --output {output} "
+        "--participants configs/execution/participants.tsv"
+
+
+rule prediction_features:
+    input:
+        qc="data/derivatives/preprocessed/{dataset}/{participant}/qc.json",
+        folds=lambda w: expand(
+            "results/human/{dataset}/{participant}/fold-{fold}/summary.json",
+            dataset=w.dataset,
+            participant=w.participant,
+            fold=FOLDS,
+        ),
+    output:
+        "results/prediction/features/{dataset}/{participant}.parquet"
+    params:
+        preprocessed=lambda w: f"data/derivatives/preprocessed/{w.dataset}/{w.participant}",
+        metrics=lambda w: f"results/human/{w.dataset}/{w.participant}",
+        outcome=lambda w: DATASET_CONFIGS[w.dataset]["prediction_outcome"],
+    shell:
+        "python -m jacaccess.prediction.features "
+        "--epochs {params.preprocessed}/epochs.npy "
+        "--times {params.preprocessed}/time_seconds.npy "
+        "--trial-ids {params.preprocessed}/trial_ids.json "
+        "--metric-root {params.metrics} "
+        "--conditions {params.preprocessed}/condition_table.tsv "
+        "--outcome-source {params.outcome} --window early:100:300 --window late:300:650 "
+        "--output {output}"
+
+
+rule aggregate_prediction_features:
+    input:
+        PREDICTION_FEATURES
+    output:
+        "results/prediction/all-features.parquet"
+    shell:
+        "python -m jacaccess.prediction.aggregate --inputs {input} --output {output}"
+
+
+rule incremental_prediction:
+    input:
+        "results/prediction/all-features.parquet"
+    output:
+        summary="results/prediction/nested-cv/summary.json",
+        folds="results/prediction/nested-cv/fold-results.csv",
+    threads: 12
+    shell:
+        "python -m jacaccess.prediction.nested_cv --features {input} --outcome outcome "
+        "--group analysis_group --jobs {threads} --output results/prediction/nested-cv"
+
+
+rule machine_stimulus_cache:
+    output:
+        "data/derivatives/machine-stimuli/seed-{seed}/manifest.json"
+    params:
+        directory=lambda w: f"data/derivatives/machine-stimuli/seed-{w.seed}"
+    resources:
+        mem_gb=8
+    threads: 12
+    shell:
+        "python -m jacaccess.machine.cache --seed {wildcards.seed} "
+        "--config configs/models/machine.yaml --output {params.directory} "
+        "--workers {threads}"
+
+
+rule machine_train:
+    input:
+        cache="data/derivatives/machine-stimuli/seed-{seed}/manifest.json"
+    output:
+        model="results/machine/{architecture}/seed-{seed}/model.pt",
+        summary="results/machine/{architecture}/seed-{seed}/summary.json",
+        validation="results/machine/{architecture}/seed-{seed}/validation-presence-by-bin.parquet",
+    resources:
+        gpu=1,
+        mem_gb=8
+    threads: 2
+    shell:
+        "python -m jacaccess.machine.train --architecture {wildcards.architecture} "
+        "--seed {wildcards.seed} --config configs/models/machine.yaml "
+        "--stimulus-cache data/derivatives/machine-stimuli/seed-{wildcards.seed} "
+        "--output results/machine/{wildcards.architecture}/seed-{wildcards.seed}"
+
+
+rule machine_analyze:
+    input:
+        "results/machine/{architecture}/seed-{seed}/model.pt"
+    output:
+        signatures="results/machine/{architecture}/seed-{seed}/jacobian-signatures.parquet",
+        intervention="results/machine/{architecture}/seed-{seed}/intervention.json",
+        test="results/machine/{architecture}/seed-{seed}/test-presence-by-bin.parquet",
+    resources:
+        gpu=1,
+        mem_gb=8
+    threads: 2
+    shell:
+        "python -m jacaccess.machine.analyze --architecture {wildcards.architecture} "
+        "--seed {wildcards.seed} --config configs/models/machine.yaml --model {input} "
+        "--output results/machine/{wildcards.architecture}/seed-{wildcards.seed}"
+
+
+rule aggregate_machine:
+    input:
+        interventions=expand(
+            "results/machine/{architecture}/seed-{seed}/intervention.json",
+            architecture=ARCHITECTURES,
+            seed=SEEDS,
+        ),
+        matching="results/aggregate/machine/accuracy-matching/accuracy-matching.json",
+    output:
+        "results/aggregate/machine/architecture-summary.csv"
+    shell:
+        "python -m jacaccess.aggregate machine --root results/machine "
+        "--output results/aggregate/machine"
+
+
+rule accuracy_matching:
+    input:
+        validation=expand(
+            "results/machine/{architecture}/seed-{seed}/validation-presence-by-bin.parquet",
+            architecture=ARCHITECTURES,
+            seed=SEEDS,
+        ),
+        test=expand(
+            "results/machine/{architecture}/seed-{seed}/test-presence-by-bin.parquet",
+            architecture=ARCHITECTURES,
+            seed=SEEDS,
+        ),
+    output:
+        report="results/aggregate/machine/accuracy-matching/accuracy-matching.json",
+        bins="results/aggregate/machine/accuracy-matching/accuracy-by-bin.csv",
+        weights="results/aggregate/machine/accuracy-matching/fallback-ipw.parquet",
+        covariates="results/aggregate/machine/accuracy-matching/test-accuracy-covariates.csv",
+    shell:
+        "python -m jacaccess.machine.accuracy_matching --root results/machine "
+        "--config configs/models/machine.yaml "
+        "--output results/aggregate/machine/accuracy-matching"
+
+
+rule primary_statistics:
+    input:
+        "results/aggregate/human.parquet"
+    output:
+        frequentist="results/statistics/{contrast}/frequentist.json",
+        contrasts="results/statistics/{contrast}/participant-contrasts.csv",
+    params:
+        dataset=lambda w: CONTRAST_BY_ID[w.contrast]["dataset"],
+        field=lambda w: CONTRAST_BY_ID[w.contrast]["condition_field"],
+        positive=lambda w: CONTRAST_BY_ID[w.contrast]["positive"],
+        negative=lambda w: CONTRAST_BY_ID[w.contrast]["negative"],
+        window=lambda w: " ".join(str(value) for value in CONTRAST_BY_ID[w.contrast]["window_ms"]),
+        directory=lambda w: f"results/statistics/{w.contrast}",
+    shell:
+        "python -m jacaccess.stats.report --human-table {input} --dataset {params.dataset} "
+        "--condition-field {params.field} --positive '{params.positive}' "
+        "--negative '{params.negative}' --window-ms {params.window} "
+        "--permutations 5000 --output {params.directory}"
+
+
+rule directional_bayes_factor:
+    input:
+        "results/statistics/{contrast}/participant-contrasts.csv"
+    output:
+        "results/statistics/{contrast}/bayes-factor.json"
+    shell:
+        "python -m jacaccess.stats.bayes {input} {output} --rscale 0.5"
+
+
+rule figures:
+    input:
+        human="results/aggregate/human.parquet",
+        machine="results/aggregate/machine/architecture-summary.csv",
+        stats=expand("results/statistics/{contrast}/bayes-factor.json", contrast=CONTRAST_IDS),
+    output:
+        "results/figures/main-human-timecourse.png",
+        "results/figures/main-machine-comparison.png",
+        "results/figures/supplement-metric-distributions.png",
+    shell:
+        "python -m jacaccess.figures.make --human {input.human} "
+        "--machine results/aggregate/machine --output results/figures"
+
+
+rule theory_comparison:
+    input:
+        human="results/aggregate/human.parquet",
+        machine="results/aggregate/machine/jacobian-signatures.parquet",
+        matching="results/aggregate/machine/accuracy-matching/accuracy-matching.json",
+        weights="results/aggregate/machine/accuracy-matching/fallback-ipw.parquet",
+    output:
+        report="results/theory-comparison/theory-comparison.json",
+        human="results/theory-comparison/human-four-metric-contrasts.csv",
+        machine="results/theory-comparison/machine-four-metric-contrasts.csv",
+        distances="results/theory-comparison/architecture-seed-distances.csv",
+    shell:
+        "python -m jacaccess.stats.theory_comparison --human {input.human} "
+        "--machine-signatures {input.machine} --accuracy-matching {input.matching} "
+        "--fallback-weights {input.weights} --output results/theory-comparison"
+
+
+rule science_advances_figures:
+    input:
+        human="results/aggregate/human.parquet",
+        architecture="results/aggregate/machine/architecture-summary.csv",
+        interventions="results/aggregate/machine/interventions.csv",
+        signatures="results/aggregate/machine/jacobian-signatures.parquet",
+        accuracy="results/aggregate/machine/accuracy-matching/accuracy-by-bin.csv",
+        theory="results/theory-comparison/theory-comparison.json",
+        human_contrasts="results/theory-comparison/human-four-metric-contrasts.csv",
+        machine_contrasts="results/theory-comparison/machine-four-metric-contrasts.csv",
+        distances="results/theory-comparison/architecture-seed-distances.csv",
+        prediction="results/prediction/nested-cv/summary.json",
+        prediction_folds="results/prediction/nested-cv/fold-results.csv",
+        qc="results/gates/preprocessing-roster.json",
+        frequentist=expand("results/statistics/{contrast}/frequentist.json", contrast=CONTRAST_IDS),
+        participant_contrasts=expand(
+            "results/statistics/{contrast}/participant-contrasts.csv", contrast=CONTRAST_IDS
+        ),
+        bayes=expand("results/statistics/{contrast}/bayes-factor.json", contrast=CONTRAST_IDS),
+        configs=expand("configs/datasets/{dataset}.yaml", dataset=DATASETS),
+    output:
+        "results/figures/science-advances/figure-manifest.json"
+    resources:
+        mem_gb=48
+    threads: 4
+    shell:
+        "python -m jacaccess.figures.science_advances "
+        "--human {input.human} --machine-dir results/aggregate/machine "
+        "--theory-dir results/theory-comparison --prediction-dir results/prediction/nested-cv "
+        "--statistics-root results/statistics --qc-roster {input.qc} "
+        "--dataset-config-root configs/datasets --output results/figures/science-advances "
+        "--manifest {output}"
+
+
+rule article_results_digest:
+    input:
+        theory="results/theory-comparison/theory-comparison.json",
+        human_gate="results/gates/human-production.json",
+        machine_gate="results/gates/machine-production-five-architectures.json",
+    output:
+        "results/article/results-digest.md"
+    shell:
+        "python automation/write_article_digest.py"
+
+
+rule study_complete:
+    input:
+        "results/adapter-gate.json",
+        "results/stage2_ready.flag",
+        "results/aggregate/machine/accuracy-matching/accuracy-matching.json",
+        "results/figures/main-human-timecourse.png",
+        "results/figures/science-advances/figure-manifest.json",
+        "results/prediction/nested-cv/summary.json",
+        "results/theory-comparison/theory-comparison.json",
+        expand("results/statistics/{contrast}/bayes-factor.json", contrast=CONTRAST_IDS),
+    output:
+        touch("results/study_complete.flag")

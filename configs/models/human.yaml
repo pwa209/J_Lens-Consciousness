@@ -1,0 +1,25 @@
+type: "residual_low_rank_nonlinear"
+latent_dimensions: 32
+hidden_dimensions: 64
+alpha: 0.1
+optimizer: "AdamW"
+learning_rate: 0.001
+weight_decay: 0.0001
+batch_transitions: 4096
+max_epochs: 200
+patience: 15
+gradient_clip_norm: 1.0
+rollout_loss_weights:
+  one_step: 1.0
+  four_step: 0.5
+  eight_step: 0.25
+stability_penalty_weight: 0.001
+stability_spectral_threshold: 1.5
+stability_power_iterations: 3
+precision: "float32"
+quality_control:
+  autograd_relative_error_max: 0.0001
+  heldout_r2_min: 0.0
+  improvement_over_persistence_min: 0.02
+  dataset_failure_fraction_max: 0.20
+

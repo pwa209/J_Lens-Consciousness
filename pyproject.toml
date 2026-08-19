@@ -1,0 +1,60 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "jacobian-conscious-access"
+version = "0.2.0"
+description = "Reproducible human EEG and machine Jacobian accessibility study"
+readme = "README.md"
+requires-python = ">=3.11,<3.14"
+license = { text = "MIT" }
+authors = [{ name = "Peng Wang" }]
+dependencies = [
+  "numpy>=2.0,<3",
+  "scipy>=1.14,<2",
+  "pandas>=2.2,<3",
+  "PyYAML>=6.0,<7",
+  "xarray>=2025.1",
+  "zarr>=3.0,<4",
+  "pyarrow>=19,<23",
+  "scikit-learn>=1.6,<2",
+  "matplotlib>=3.9,<4",
+  "requests>=2.32,<3",
+]
+
+[project.optional-dependencies]
+eeg = [
+  "mne>=1.9,<2",
+  "mne-bids>=0.17,<1",
+  "pyprep>=0.5,<1",
+  "mne-icalabel>=0.7,<1",
+  "python-picard>=0.8,<1",
+  "h5py>=3.12,<4",
+  "osfclient>=0.0.5,<1",
+]
+workflow = [
+  "snakemake>=9,<10",
+]
+dev = [
+  "pytest>=8.3,<9",
+  "pytest-cov>=6,<7",
+  "ruff>=0.11,<1",
+  "mypy>=1.15,<2",
+]
+
+[project.scripts]
+jacaccess-synthetic = "jacaccess.synthetic:main"
+jacaccess-synthetic-e2e = "jacaccess.synthetic_e2e:main"
+jacaccess-env-check = "jacaccess.environment_check:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/jacaccess"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"

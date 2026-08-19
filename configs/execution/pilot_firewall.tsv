@@ -1,0 +1,6 @@
+dataset_id	participant_id	confirmatory_include	reason
+gabor	sub-10	0	Five folds generated before prospective boundary; methods pilot only
+somato	sub1	0	Pilot participant selected and processing attempted before prospective boundary
+kronemer	223_RP_EEG	0	Report pilot participant selected before prospective boundary
+kronemer	238_NRP	0	No-report pilot participant selected before prospective boundary
+

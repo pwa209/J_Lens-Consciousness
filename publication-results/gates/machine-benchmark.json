@@ -1,0 +1,15 @@
+{
+  "mode": "benchmark",
+  "ready": true,
+  "expected_runs": 4,
+  "completed_summaries": 4,
+  "completed_interventions": 0,
+  "successful_intervention_seeds": {
+    "feedforward": 0,
+    "recurrent": 0,
+    "shared_workspace": 0,
+    "private_modules": 0
+  },
+  "accuracy_matching": null,
+  "failures": []
+}

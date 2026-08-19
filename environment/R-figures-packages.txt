@@ -1,0 +1,13 @@
+# Native-R publication figure environment used on AutoDL (2026-08-19)
+R 4.1.2
+dplyr 1.0.10
+tidyr 1.2.1
+readr 2.1.4
+ggplot2 3.3.5
+ggrepel 0.9.3
+patchwork 1.1.1
+scales 1.2.1
+jsonlite 1.8.4
+digest 0.6.31
+ragg 1.2.5
+svglite 2.1.0

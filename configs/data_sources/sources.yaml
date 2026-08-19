@@ -1,0 +1,21 @@
+kronemer:
+  repository: "NITRC BMVP"
+  project_url: "https://www.nitrc.org/projects/bmvp/"
+  acquisition: "authenticated_manifest"
+  manifest_template: "configs/data_sources/kronemer_downloads.tsv"
+  destination: "data/raw/kronemer"
+
+gabor:
+  repository: "OpenNeuro"
+  dataset_id: "ds005273"
+  snapshot: "1.0.0"
+  acquisition: "unsigned_s3"
+  s3_uri: "s3://openneuro.org/ds005273"
+  destination: "data/raw/gabor"
+
+somato:
+  repository: "OSF"
+  project_id: "hqkym"
+  acquisition: "osfclient"
+  destination: "data/raw/somato"
+

@@ -1,0 +1,40 @@
+name: jacobian_conscious_access_aaas
+version: 1
+colors:
+  blue_teal: "#497987"
+  deep_blue: "#184D77"
+  sand: "#E1BD89"
+  orange: "#D48448"
+  sage_gray: "#858D7E"
+  brick: "#BE4A36"
+architecture_mapping:
+  feedforward: "#184D77"
+  private_modules: "#497987"
+  recurrent: "#858D7E"
+  shared_workspace: "#D48448"
+  unlimited_shared_state: "#BE4A36"
+control_mapping:
+  sham: "#E1BD89"
+article_style:
+  paper: "#FFFFFF"
+  ink: "#17232C"
+  secondary_ink: "#59636A"
+  panel_fill: "#FFFFFF"
+  main_figure_count: 6
+  panel_letters: lowercase
+  dense_axis_architecture_codes: [A, B, C, D, E]
+  architecture_code_mapping:
+    A: feedforward
+    B: private_modules
+    C: recurrent
+    D: shared_workspace
+    E: unlimited_shared_state
+dataset_mapping:
+  gabor: "#184D77"
+  kronemer: "#D48448"
+  somato: "#858D7E"
+rules:
+  - "Architecture colors remain invariant across every main and supplementary figure."
+  - "Sand denotes sham/control or a neutral gate region, not an architecture."
+  - "Diverging maps use deep blue through sand/near-white to brick."
+  - "Black and neutral gray are reserved for axes, text, thresholds, and reference data."

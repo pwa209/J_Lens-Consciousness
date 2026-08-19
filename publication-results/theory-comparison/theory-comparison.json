@@ -1,0 +1,173 @@
+{
+  "discovery_contrast": "gabor-0",
+  "primary_metrics": [
+    "gain",
+    "broadcast",
+    "persistence",
+    "concentration"
+  ],
+  "winning_architecture": "feedforward",
+  "architecture_ranking": [
+    {
+      "architecture": "feedforward",
+      "mean_rms_distance": 0.43172933199695007,
+      "sd_rms_distance": 0.0443296342978108,
+      "mean_cosine_similarity": 0.7649515638625551,
+      "mean_magnitude_ratio": 0.35068299154394217,
+      "seeds": 15
+    },
+    {
+      "architecture": "shared_workspace",
+      "mean_rms_distance": 0.45840281174751424,
+      "sd_rms_distance": 0.06783546884680111,
+      "mean_cosine_similarity": 0.33119471040178355,
+      "mean_magnitude_ratio": 0.15256010574258563,
+      "seeds": 16
+    },
+    {
+      "architecture": "unlimited_shared_state",
+      "mean_rms_distance": 0.47124693037416837,
+      "sd_rms_distance": 0.04477868608249151,
+      "mean_cosine_similarity": 0.32784562703044906,
+      "mean_magnitude_ratio": 0.30859039606176164,
+      "seeds": 20
+    },
+    {
+      "architecture": "private_modules",
+      "mean_rms_distance": 0.4826483605688785,
+      "sd_rms_distance": 0.0738239550306641,
+      "mean_cosine_similarity": 0.22783366611084085,
+      "mean_magnitude_ratio": 0.4054630455758398,
+      "seeds": 17
+    },
+    {
+      "architecture": "recurrent",
+      "mean_rms_distance": 0.6202571520020993,
+      "sd_rms_distance": 0.19578808661278113,
+      "mean_cosine_similarity": -0.04225993634285778,
+      "mean_magnitude_ratio": 0.7476170549140687,
+      "seeds": 15
+    }
+  ],
+  "capacity_equivalence_margin_discovery_human_sd": 0.2,
+  "constrained_vs_unlimited": {
+    "gain": {
+      "mean_standardized_difference": 0.00572415397451802,
+      "ci90": [
+        -0.013721773596073236,
+        0.025170081545109264
+      ],
+      "equivalent_within_0.20": true
+    },
+    "broadcast": {
+      "mean_standardized_difference": -0.057284764934058055,
+      "ci90": [
+        -0.10662394655572344,
+        -0.007945583312392708
+      ],
+      "equivalent_within_0.20": true
+    },
+    "persistence": {
+      "mean_standardized_difference": 0.1027166789144207,
+      "ci90": [
+        -0.08025200637691364,
+        0.2856853642057549
+      ],
+      "equivalent_within_0.20": false
+    },
+    "concentration": {
+      "mean_standardized_difference": 0.024821485500353603,
+      "ci90": [
+        -0.0009084728473371731,
+        0.05055144384804436
+      ],
+      "equivalent_within_0.20": true
+    }
+  },
+  "all_primary_metrics_equivalent": false,
+  "capacity_limit_interpretation_falsified": false,
+  "replication": {
+    "gabor-0": {
+      "standardized_distance_from_gabor_discovery": 0.0,
+      "same_direction_fraction": 1.0,
+      "participants": 28
+    },
+    "kronemer-0": {
+      "standardized_distance_from_gabor_discovery": 0.5267756581306458,
+      "same_direction_fraction": 0.75,
+      "participants": 116
+    },
+    "kronemer-1": {
+      "standardized_distance_from_gabor_discovery": 0.36337167024612427,
+      "same_direction_fraction": 0.75,
+      "participants": 116
+    },
+    "somato-0": {
+      "standardized_distance_from_gabor_discovery": 0.9250892996788025,
+      "same_direction_fraction": 0.75,
+      "participants": 29
+    },
+    "somato-1": {
+      "standardized_distance_from_gabor_discovery": 2.243119478225708,
+      "same_direction_fraction": 0.5,
+      "participants": 29
+    }
+  },
+  "leave_one_dataset_out": [
+    {
+      "held_out_dataset": "gabor",
+      "contrast_id": "gabor-0",
+      "training_datasets": [
+        "kronemer",
+        "somato"
+      ],
+      "standardized_distance": 0.46941953897476196,
+      "cosine_similarity": 0.5223302439925486,
+      "same_direction_fraction": 0.5
+    },
+    {
+      "held_out_dataset": "kronemer",
+      "contrast_id": "kronemer-0",
+      "training_datasets": [
+        "gabor",
+        "somato"
+      ],
+      "standardized_distance": 0.43164342641830444,
+      "cosine_similarity": 0.7743310266984559,
+      "same_direction_fraction": 0.75
+    },
+    {
+      "held_out_dataset": "kronemer",
+      "contrast_id": "kronemer-1",
+      "training_datasets": [
+        "gabor",
+        "somato"
+      ],
+      "standardized_distance": 0.4771793484687805,
+      "cosine_similarity": 0.8347103854387354,
+      "same_direction_fraction": 0.75
+    },
+    {
+      "held_out_dataset": "somato",
+      "contrast_id": "somato-0",
+      "training_datasets": [
+        "gabor",
+        "kronemer"
+      ],
+      "standardized_distance": 0.6216777563095093,
+      "cosine_similarity": 0.851329058357429,
+      "same_direction_fraction": 1.0
+    },
+    {
+      "held_out_dataset": "somato",
+      "contrast_id": "somato-1",
+      "training_datasets": [
+        "gabor",
+        "kronemer"
+      ],
+      "standardized_distance": 1.624631643295288,
+      "cosine_similarity": 0.8081081838718779,
+      "same_direction_fraction": 0.75
+    }
+  ]
+}

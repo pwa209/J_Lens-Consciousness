@@ -1,0 +1,145 @@
+{
+  "ready": true,
+  "design": "integrated_science_advances_six_figure_system_native_r",
+  "created_at_utc": "2026-08-19 06:26:30 UTC",
+  "renderer": {
+    "language": "R",
+    "version": "R version 4.1.2 (2021-11-01)",
+    "packages": {
+      "ggplot2": "3.3.5",
+      "patchwork": "1.1.1",
+      "svglite": "2.1.0"
+    }
+  },
+  "palette": ["#C22525", "#3F3A39", "#6F5E56", "#C3AB8C", "#E1D6C7"],
+  "main_figures": 6,
+  "files": [
+    {
+      "path": "/root/autodl-tmp/jacobian-conscious-access/results-extension/human-adaptation/figures/science-advances-r/final/Fig1-study-logic-R.png",
+      "format": "png",
+      "title": "Question, theory space, and study logic",
+      "bytes": 231840,
+      "sha256": "1c385faa2585650246f5d9844ae2082cb318c0cc75ed201fccc191edf9efcac8"
+    },
+    {
+      "path": "/root/autodl-tmp/jacobian-conscious-access/results-extension/human-adaptation/figures/science-advances-r/final/Fig1-study-logic-R.pdf",
+      "format": "pdf",
+      "title": "Question, theory space, and study logic",
+      "bytes": 35449,
+      "sha256": "bb40034dda5787c56df930c40e82e526f1345477998a11e8dd52d43341ab4623"
+    },
+    {
+      "path": "/root/autodl-tmp/jacobian-conscious-access/results-extension/human-adaptation/figures/science-advances-r/final/Fig1-study-logic-R.svg",
+      "format": "svg",
+      "title": "Question, theory space, and study logic",
+      "bytes": 24275,
+      "sha256": "d8f6ea6ef7b4ba64e4e6ff7808e8df50114a217098f2d2abd1b265cc56dbc999"
+    },
+    {
+      "path": "/root/autodl-tmp/jacobian-conscious-access/results-extension/human-adaptation/figures/science-advances-r/final/Fig2-human-geometry-R.png",
+      "format": "png",
+      "title": "Human access geometry is heterogeneous and adds no prediction",
+      "bytes": 338329,
+      "sha256": "3d937c551d5a9b69259c16ca0505067878132a5ef3b1cda3c3893c92f20e31c1"
+    },
+    {
+      "path": "/root/autodl-tmp/jacobian-conscious-access/results-extension/human-adaptation/figures/science-advances-r/final/Fig2-human-geometry-R.pdf",
+      "format": "pdf",
+      "title": "Human access geometry is heterogeneous and adds no prediction",
+      "bytes": 55703,
+      "sha256": "28e8b5864b647766b7a9fe06d4e1a96e4d1f7f1c321678a9919c8e4ecfde6a5d"
+    },
+    {
+      "path": "/root/autodl-tmp/jacobian-conscious-access/results-extension/human-adaptation/figures/science-advances-r/final/Fig2-human-geometry-R.svg",
+      "format": "svg",
+      "title": "Human access geometry is heterogeneous and adds no prediction",
+      "bytes": 119545,
+      "sha256": "8d08722be78a2dd78af9137eb9c3f5be15246b490dc0e0980c6f520a24d48716"
+    },
+    {
+      "path": "/root/autodl-tmp/jacobian-conscious-access/results-extension/human-adaptation/figures/science-advances-r/final/Fig3-machine-geometry-R.png",
+      "format": "png",
+      "title": "Architecture controls and causal machine geometry",
+      "bytes": 306731,
+      "sha256": "ca7ad30ebeb2e49a7b445c8569885b5f85d8f651fec7bf424acaebfd8f857b28"
+    },
+    {
+      "path": "/root/autodl-tmp/jacobian-conscious-access/results-extension/human-adaptation/figures/science-advances-r/final/Fig3-machine-geometry-R.pdf",
+      "format": "pdf",
+      "title": "Architecture controls and causal machine geometry",
+      "bytes": 33459,
+      "sha256": "b8420087a083e93dfb7219efd41c30b27a8f5452d60eed0cd492e7f704846dd7"
+    },
+    {
+      "path": "/root/autodl-tmp/jacobian-conscious-access/results-extension/human-adaptation/figures/science-advances-r/final/Fig3-machine-geometry-R.svg",
+      "format": "svg",
+      "title": "Architecture controls and causal machine geometry",
+      "bytes": 75299,
+      "sha256": "083a3b4da415b0e7ee087653d1685470ed8fee147b8443723bb8cc36b8499a34"
+    },
+    {
+      "path": "/root/autodl-tmp/jacobian-conscious-access/results-extension/human-adaptation/figures/science-advances-r/final/Fig4-human-machine-convergence-R.png",
+      "format": "png",
+      "title": "Human-machine convergence adjudicates theories",
+      "bytes": 269046,
+      "sha256": "bf06a0b856de2fd6ec8052dc1f3347e9d82b38feb5baa3e2294db833b9ac3838"
+    },
+    {
+      "path": "/root/autodl-tmp/jacobian-conscious-access/results-extension/human-adaptation/figures/science-advances-r/final/Fig4-human-machine-convergence-R.pdf",
+      "format": "pdf",
+      "title": "Human-machine convergence adjudicates theories",
+      "bytes": 39406,
+      "sha256": "53a2d4508c8ced1049d491ef77e8f05c3ab60e7284e1da99d1a29b7c957fe5a6"
+    },
+    {
+      "path": "/root/autodl-tmp/jacobian-conscious-access/results-extension/human-adaptation/figures/science-advances-r/final/Fig4-human-machine-convergence-R.svg",
+      "format": "svg",
+      "title": "Human-machine convergence adjudicates theories",
+      "bytes": 46317,
+      "sha256": "cfc7aebc490fec9a4b9d1abfd8c0e26190a6bc10411fa3368f5e7157f7299881"
+    },
+    {
+      "path": "/root/autodl-tmp/jacobian-conscious-access/results-extension/human-adaptation/figures/science-advances-r/final/Fig5-human-guided-adaptation-R.png",
+      "format": "png",
+      "title": "Human-guided adaptation does not improve held-out geometry",
+      "bytes": 435886,
+      "sha256": "c1a8e0147b8ee7dd2f49dd50b03f89f5531081f7cbc8dd95c0525ac661e7f5f5"
+    },
+    {
+      "path": "/root/autodl-tmp/jacobian-conscious-access/results-extension/human-adaptation/figures/science-advances-r/final/Fig5-human-guided-adaptation-R.pdf",
+      "format": "pdf",
+      "title": "Human-guided adaptation does not improve held-out geometry",
+      "bytes": 60685,
+      "sha256": "a21ce4ac1faba8a7a7bc9e7efe6b4dfa45ea0618385cc3f9c75cf753122192e3"
+    },
+    {
+      "path": "/root/autodl-tmp/jacobian-conscious-access/results-extension/human-adaptation/figures/science-advances-r/final/Fig5-human-guided-adaptation-R.svg",
+      "format": "svg",
+      "title": "Human-guided adaptation does not improve held-out geometry",
+      "bytes": 130208,
+      "sha256": "4ef325b1f67c8b872f2c3170bb389dedc473a2014ee1930d578e4713e7cff928"
+    },
+    {
+      "path": "/root/autodl-tmp/jacobian-conscious-access/results-extension/human-adaptation/figures/science-advances-r/final/Fig6-integrated-evidence-R.png",
+      "format": "png",
+      "title": "Causal transfer and integrated theoretical evidence",
+      "bytes": 307865,
+      "sha256": "9ee114694e972485a63290d3a244ad96a3de2f5789152e220d66d9f4de4fac18"
+    },
+    {
+      "path": "/root/autodl-tmp/jacobian-conscious-access/results-extension/human-adaptation/figures/science-advances-r/final/Fig6-integrated-evidence-R.pdf",
+      "format": "pdf",
+      "title": "Causal transfer and integrated theoretical evidence",
+      "bytes": 36007,
+      "sha256": "b3817d5f885742aaa85a7bf473f88e47027a0d57cee650b397e9a8a53d84b3cb"
+    },
+    {
+      "path": "/root/autodl-tmp/jacobian-conscious-access/results-extension/human-adaptation/figures/science-advances-r/final/Fig6-integrated-evidence-R.svg",
+      "format": "svg",
+      "title": "Causal transfer and integrated theoretical evidence",
+      "bytes": 65820,
+      "sha256": "844c1064dc663881d81e9103cbb0cb5bb5d7735c800a46ab773a7e58e3b0fb6a"
+    }
+  ],
+  "data_manifest": "/root/autodl-tmp/jacobian-conscious-access/results-extension/human-adaptation/figures/science-advances-r/data/manifest.json"
+}

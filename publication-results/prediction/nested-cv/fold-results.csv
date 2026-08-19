@@ -1,0 +1,11 @@
+fold,family,auc,c,l1_ratio,test_n
+0,conventional,0.5555564196086977,0.1,1.0,8512
+0,conventional_plus_jacobian,0.5487843937829573,10.0,0.0,8512
+1,conventional,0.5371181300575314,0.1,1.0,8577
+1,conventional_plus_jacobian,0.5534462377224874,10.0,0.0,8577
+2,conventional,0.5468702232714787,0.1,1.0,8525
+2,conventional_plus_jacobian,0.5505084644327236,10.0,0.0,8525
+3,conventional,0.5998924518458277,0.01,0.5,8583
+3,conventional_plus_jacobian,0.5688965805989159,10.0,0.0,8583
+4,conventional,0.5466286273687155,0.1,1.0,8517
+4,conventional_plus_jacobian,0.5648514929025943,10.0,0.0,8517

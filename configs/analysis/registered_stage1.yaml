@@ -1,0 +1,81 @@
+study_mode: "candidate_registered_report_level_2"
+prospective_boundary_date: "2026-08-11"
+stage1_gate_receipt: "results/registration/STAGE1_IPA.json"
+
+prior_work:
+  machine_runs_completed_before_boundary: 80
+  architectures_completed_before_boundary:
+    - feedforward
+    - recurrent
+    - shared_workspace
+    - private_modules
+  human_processing_before_boundary:
+    gabor:
+      participant: "sub-10"
+      folds_generated: [0, 1, 2, 3, 4]
+      inspected_outputs: ["preprocessing QC", "fold-3 model QC"]
+      confirmatory_use: false
+    somato:
+      participant: "sub1"
+      confirmatory_use: false
+    kronemer:
+      participants: ["223_RP_EEG", "238_NRP"]
+      confirmatory_use: false
+
+dataset_roles:
+  discovery: "gabor"
+  replication_1: "kronemer"
+  replication_2: "somato"
+  freeze_after_discovery:
+    - metric transforms
+    - metric signs
+    - time-window summaries
+    - component weights
+    - equivalence bounds
+  secondary_generalization: "leave_one_dataset_out"
+
+primary_metrics:
+  - gain
+  - broadcast
+  - persistence
+  - concentration
+secondary_metrics:
+  - effective_rank
+
+normalization:
+  raw_transforms:
+    gain: "log(max(x, 0.0001))"
+    broadcast: "logit(clip(x, 0.0001, 0.9999))"
+    persistence: "atanh(sqrt(clip(x, 0, 0.9999)))"
+    concentration: "logit(clip(x, 0.0001, 0.9999))"
+    effective_rank: "log(max(x / state_dimension, 0.0001))"
+  within_participant_reference: "training-fold pre-stimulus baseline only"
+  participant_scale: "training-fold standard deviation; floor 0.0001"
+  fold_aggregation: "equal mean across held-out folds within participant"
+  participant_aggregation: "equal participant weight"
+  human_machine_primary_axis: "Gabor-discovery participant SD, frozen before replication"
+  shape_only_secondary: "cosine similarity after L2 normalization"
+  magnitude_secondary: "Euclidean norm ratio reported separately"
+  architecture_independent_weights: "equal weights across four primary metrics"
+
+equivalence:
+  standardized_margin: 0.20
+  capacity_falsifier: >-
+    Constrained and unlimited shared-state architectures are equivalent on all
+    four primary human-machine distances within +/-0.20 discovery-human SD.
+
+pilot_firewall:
+  inventory: "results/registration/pilot-exposure-inventory.json"
+  exclusions: "configs/execution/pilot_firewall.tsv"
+  permitted_outputs:
+    - preprocessing QC and exclusions
+    - runtime, RAM, GPU and disk use
+    - optimization convergence, epoch count and validation loss
+    - missingness and pipeline failures
+  forbidden_before_ipa:
+    - condition-specific geometry summaries
+    - condition contrasts or effect sizes
+    - group-level human results
+    - human-machine similarity or architecture ranking
+    - outcome-driven window, transform or threshold changes
+

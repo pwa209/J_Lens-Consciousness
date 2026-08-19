@@ -1,0 +1,4 @@
+url	relative_path	expected_size_bytes	sha256
+https://osf.io/download/gf3zt/	somato/DATASET_PREPROCESSED.zip	4363337611	
+https://www.nitrc.org/frs/downloadlink.php/12617	kronemer/223_RP_EEG.tar	1840027648	
+https://www.nitrc.org/frs/downloadlink.php/12595	kronemer/238_NRP.tar	23086433792	

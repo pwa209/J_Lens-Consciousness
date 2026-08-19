@@ -1,0 +1,21 @@
+sampling_rate_hz: 100
+continuous_filter_jobs: 1
+continuous_resample_before_filter: true
+continuous_notch_q: 30.0
+epoched_filter_jobs: 4
+bandpass_hz: [0.5, 40.0]
+baseline_ms: [-200, 0]
+bad_channel_exclusion_fraction: 0.15
+max_removed_ica_fraction: 0.20
+ica_highpass_hz: 1.0
+ica_components_max: 64
+iclabel_thresholds:
+  eye: 0.80
+  muscle: 0.80
+  heart: 0.90
+  channel_noise: 0.90
+epoch_peak_to_peak_uv: 150
+robust_z_threshold: 6.0
+minimum_valid_trials: 40
+random_seed: 20260730
+save_float_dtype: "float32"
